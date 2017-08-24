@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015, 2016 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013-2017 The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +33,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <hardware/gps.h>
+#include <loc_gps.h>
+#include <LocationAPI.h>
 #include <time.h>
 
 /**
@@ -47,14 +48,14 @@ extern "C" {
 
 /** Location has valid source information. */
 #define LOCATION_HAS_SOURCE_INFO   0x0020
-/** GpsLocation has valid "is indoor?" flag */
-#define GPS_LOCATION_HAS_IS_INDOOR   0x0040
-/** GpsLocation has valid floor number */
-#define GPS_LOCATION_HAS_FLOOR_NUMBER   0x0080
-/** GpsLocation has valid map URL*/
-#define GPS_LOCATION_HAS_MAP_URL   0x0100
-/** GpsLocation has valid map index */
-#define GPS_LOCATION_HAS_MAP_INDEX   0x0200
+/** LocGpsLocation has valid "is indoor?" flag */
+#define LOC_GPS_LOCATION_HAS_IS_INDOOR   0x0040
+/** LocGpsLocation has valid floor number */
+#define LOC_GPS_LOCATION_HAS_FLOOR_NUMBER   0x0080
+/** LocGpsLocation has valid map URL*/
+#define LOC_GPS_LOCATION_HAS_MAP_URL   0x0100
+/** LocGpsLocation has valid map index */
+#define LOC_GPS_LOCATION_HAS_MAP_INDEX   0x0200
 
 /** Sizes for indoor fields */
 #define GPS_LOCATION_MAP_URL_SIZE 400
@@ -81,14 +82,15 @@ extern "C" {
 #define ULP_MAX_NMEA_STRING_SIZE 201
 
 /*Emergency SUPL*/
-#define GPS_NI_TYPE_EMERGENCY_SUPL    4
+#define LOC_GPS_NI_TYPE_EMERGENCY_SUPL    4
 
-#define AGPS_CERTIFICATE_MAX_LENGTH 2000
-#define AGPS_CERTIFICATE_MAX_SLOTS 10
+#define LOC_AGPS_CERTIFICATE_MAX_LENGTH 2000
+#define LOC_AGPS_CERTIFICATE_MAX_SLOTS 10
 
 enum loc_registration_mask_status {
     LOC_REGISTRATION_MASK_ENABLED,
-    LOC_REGISTRATION_MASK_DISABLED
+    LOC_REGISTRATION_MASK_DISABLED,
+    LOC_REGISTRATION_MASK_SET
 };
 
 typedef enum {
@@ -99,7 +101,7 @@ typedef enum {
 typedef struct {
     /** set to sizeof(UlpLocation) */
     size_t          size;
-    GpsLocation     gpsLocation;
+    LocGpsLocation     gpsLocation;
     /* Provider indicator for HYBRID or GPS */
     uint16_t        position_source;
     /*allows HAL to pass additional information related to the location */
@@ -121,13 +123,13 @@ typedef struct {
 
 /** AGPS type */
 typedef int16_t AGpsExtType;
-#define AGPS_TYPE_INVALID       -1
-#define AGPS_TYPE_ANY           0
-#define AGPS_TYPE_SUPL          1
-#define AGPS_TYPE_C2K           2
-#define AGPS_TYPE_WWAN_ANY      3
-#define AGPS_TYPE_WIFI          4
-#define AGPS_TYPE_SUPL_ES       5
+#define LOC_AGPS_TYPE_INVALID       -1
+#define LOC_AGPS_TYPE_ANY           0
+#define LOC_AGPS_TYPE_SUPL          1
+#define LOC_AGPS_TYPE_C2K           2
+#define LOC_AGPS_TYPE_WWAN_ANY      3
+#define LOC_AGPS_TYPE_WIFI          4
+#define LOC_AGPS_TYPE_SUPL_ES       5
 
 /** SSID length */
 #define SSID_BUF_SIZE (32+1)
@@ -140,13 +142,13 @@ typedef int16_t AGpsBearerType;
 
 /** GPS extended callback structure. */
 typedef struct {
-    /** set to sizeof(GpsCallbacks) */
+    /** set to sizeof(LocGpsCallbacks) */
     size_t      size;
-    gps_set_capabilities set_capabilities_cb;
-    gps_acquire_wakelock acquire_wakelock_cb;
-    gps_release_wakelock release_wakelock_cb;
-    gps_create_thread create_thread_cb;
-    gps_request_utc_time request_utc_time_cb;
+    loc_gps_set_capabilities set_capabilities_cb;
+    loc_gps_acquire_wakelock acquire_wakelock_cb;
+    loc_gps_release_wakelock release_wakelock_cb;
+    loc_gps_create_thread create_thread_cb;
+    loc_gps_request_utc_time request_utc_time_cb;
 } GpsExtCallbacks;
 
 /** Callback to report the xtra server url to the client.
@@ -157,8 +159,8 @@ typedef void (* report_xtra_server)(const char*, const char*, const char*);
 
 /** Callback structure for the XTRA interface. */
 typedef struct {
-    gps_xtra_download_request download_request_cb;
-    gps_create_thread create_thread_cb;
+    loc_gps_xtra_download_request download_request_cb;
+    loc_gps_create_thread create_thread_cb;
     report_xtra_server report_xtra_server_cb;
 } GpsXtraExtCallbacks;
 
@@ -168,7 +170,7 @@ typedef struct {
     size_t          size;
 
     AGpsExtType type;
-    AGpsStatusValue status;
+    LocAGpsStatusValue status;
     uint32_t        ipv4_addr;
     struct sockaddr_storage addr;
     char            ssid[SSID_BUF_SIZE];
@@ -183,11 +185,11 @@ typedef void (* agps_status_extended)(AGpsExtStatus* status);
 /** Callback structure for the AGPS interface. */
 typedef struct {
     agps_status_extended status_cb;
-    gps_create_thread create_thread_cb;
+    loc_gps_create_thread create_thread_cb;
 } AGpsExtCallbacks;
 
 
-typedef void (*loc_ni_notify_callback)(GpsNiNotification *notification, bool esEnalbed);
+typedef void (*loc_ni_notify_callback)(LocGpsNiNotification *notification, bool esEnalbed);
 /** GPS NI callback structure. */
 typedef struct
 {

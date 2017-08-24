@@ -1,6 +1,6 @@
 ifneq ($(USE_DEVICE_SPECIFIC_GPS),true)
 # TODO:  Find a better way to separate build configs for ADP vs non-ADP devices
-ifneq ($(TARGET_BOARD_AUTO),true)
+ifneq ($(BOARD_IS_AUTOMOTIVE),true)
   ifneq ($(BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE),)
   LOCAL_PATH := $(call my-dir)
 
