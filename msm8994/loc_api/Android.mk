@@ -6,6 +6,7 @@ LOCAL_PATH := $(call my-dir)
 ifneq ($(TARGET_NO_RPC),true)
 
 GPS_DIR_LIST += $(LOCAL_PATH)/libloc_api-rpc-50001/
+GPS_DIR_LIST += $(LOCAL_PATH)/libloc_api-rpc/
 
 endif #TARGET_NO_RPC
 
