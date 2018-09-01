@@ -816,6 +816,10 @@ int phNxpNciHal_fw_mw_ver_check() {
              (rom_version == FW_MOBILE_ROM_VERSION_PN551) &&
              (fw_maj_ver == 0x05)) {
     status = NFCSTATUS_SUCCESS;
+  } else if (((nfcFL.chipType == pn548C2) || (nfcFL.chipType == pn66T)) &&
+             (rom_version == FW_MOBILE_ROM_VERSION_PN548) &&
+             (fw_maj_ver == 0x01)) {
+    status = NFCSTATUS_SUCCESS;
   }
   return status;
 }
