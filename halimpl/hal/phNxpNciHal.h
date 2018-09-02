@@ -37,6 +37,7 @@ typedef void(phNxpNciHal_control_granted_callback_t)();
 #define FW_MOBILE_ROM_VERSION_PN553 0x11
 #define FW_MOBILE_ROM_VERSION_PN557 0x12
 #define FW_MOBILE_ROM_VERSION_PN548 0x10
+#define FW_MOBILE_ROM_VERSION_PN547 0x08
 /* NCI Data */
 
 #define NCI_MT_CMD 0x20
