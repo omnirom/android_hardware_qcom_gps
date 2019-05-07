@@ -109,6 +109,15 @@ NFCSTATUS phNxpNciHal_process_ext_rsp(uint8_t* p_ntf, uint16_t* p_len) {
     return status;
   }
 
+  if (p_ntf[0] == 0x61 && p_ntf[1] == 0x05 && *p_len < 14) {
+    if(*p_len <= 6) {
+      android_errorWriteLog(0x534e4554, "118152591");
+    }
+    NXPLOG_NCIHAL_E("RF_INTF_ACTIVATED_NTF length error!");
+    status = NFCSTATUS_FAILED;
+    return status;
+  }
+
   if (p_ntf[0] == 0x61 && p_ntf[1] == 0x05 && p_ntf[4] == 0x03 &&
       p_ntf[5] == 0x05 && nxpprofile_ctrl.profile_type == EMV_CO_PROFILE) {
     p_ntf[4] = 0xFF;
